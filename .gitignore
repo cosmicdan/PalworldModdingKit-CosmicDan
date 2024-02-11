@@ -138,3 +138,6 @@ Plugins/Wwise
 
 # Explcitly ignore Mac DS_Store files, regardless of where they are
 .DS_Store
+
+# CosmicDan: include content (actual mods)
+!/Content/**
