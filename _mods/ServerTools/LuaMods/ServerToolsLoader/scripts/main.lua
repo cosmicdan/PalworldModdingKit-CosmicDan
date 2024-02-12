@@ -6,8 +6,11 @@
     Daniel "CosmicDan" Connolly
 ]]--
 
+-- UE4SS 3.0.0
+local SupportedBpLoaderScriptSize = 7819
+
 -- Credits to Khejanin for this function
-function getModActor()
+function getServerToolsModActor()
     local modActors = FindAllOf("ModActor_C");
     for idx, modActor in ipairs(modActors) do
         if modActor:IsA("/Game/Mods/ServerTools/ModActor.ModActor_C") then
@@ -61,10 +64,24 @@ function AfterFirstTick()
     print("Server up!")
 end
 
+function verifyBpLoader()
+    bpLoaderLuaFile=io.open("Mods\\BPModLoaderMod\\Scripts\\main.lua","r")
+    if bpLoaderLuaFile == nil then
+        print("Missing BPModLoaderMod? Your UE4SS install is incomplete/corrupted, mod will not work!")
+        return
+    else
+        foundBpSize = bpLoaderLuaFile:seek("end")
+        if foundBpSize ~= SupportedBpLoaderScriptSize then
+            print("WARNING: Your BPModLoader mod is NOT the original UE4SS 3.0 version. ServerTools may not work.")
+            print ("    [Size of main.script is " .. tostring(foundBpSize) .. ", expected " .. tostring(SupportedBpLoaderScriptSize) .. "]")
+        end
+    end
+end
+
 
 -- Run
 
-print("Server starting...")
+verifyBpLoader()
 
 --[[
 NotifyOnNewObject("/Script/Engine.NetConnection", function (Context)
@@ -72,7 +89,7 @@ NotifyOnNewObject("/Script/Engine.NetConnection", function (Context)
 end)
 ]]--
 
-RegisterCustomEvent("OnServerToolsPreInit", function ()
+RegisterCustomEvent("OnServerToolsInit", function ()
     --DumpAllObjects()
     local errored = false
    
@@ -96,11 +113,12 @@ RegisterCustomEvent("OnServerToolsPreInit", function ()
 
     if errored then
         print("ServerTools failed to load one or more hooks. Missing/outdated ServerTools.pak?")
+        return
     end
 end)
 
-RegisterCustomEvent("OnServerToolsInit", function ()
-    modActor = getModActor()
+RegisterCustomEvent("OnServerToolsPostInit", function ()
+    modActor = getServerToolsModActor()
     if modActor == nil then
         print("Main mod failed to load. Missing/outdated ServerTools.pak?")
     else
@@ -129,3 +147,19 @@ RegisterCustomEvent("OnServerToolsInit", function ()
         ]]--
     end
 end)
+
+local loadCheckLoops = 0
+LoopAsync(1000, function()
+    if loadCheckLoops >= 10 then -- wait 10 seconds max
+        print("Failed to load the ServerTools.pak file! Are you sure it's installed?")        
+        return true
+    end
+
+    if StaticFindObject("/Game/Mods/ServerTools/ModActor.ModActor_C:ModPrint"):IsValid() then
+        return true
+    end
+   
+    loadCheckLoops = loadCheckLoops + 1
+    return false
+end)
+
