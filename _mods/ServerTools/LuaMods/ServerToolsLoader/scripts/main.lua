@@ -122,7 +122,7 @@ RegisterCustomEvent("OnServerToolsPostInit", function ()
     if modActor == nil then
         print("Main mod failed to load. Missing/outdated ServerTools.pak?")
     else
-        RegisterHook("/Script/Pal.PalPlayerState:EnterChat_Receive", function(Context, ChatMessage)
+        RegisterHook("/Script/Pal.PalPlayerState:EnterChat_Receive", function(PalPlayerState, ChatMessage)
             local MsgStruct = ChatMessage:get()
             
             -- need to deserialize the entire struct in order, otherwise UE crashes
@@ -139,10 +139,20 @@ RegisterCustomEvent("OnServerToolsPostInit", function ()
             modActor:OnNewPalPlayerState(PalPlayerState)
         end)
         
-        -- Note to self: For some reason this is fired for ANY message on the server side... maybe can use it to run commands...?
+        -- Could be used to receive bounce-backs from fake players
         --[[
         RegisterHook("/Script/Pal.PalGameStateInGame:BroadcastChatMessage", function(BroadcastChatMessage, ChatMessage)
-            print("! Broadcast fired")
+            
+            local MsgStruct = ChatMessage:get()
+            
+            -- need to deserialize the entire struct in order, otherwise UE crashes
+            local byteCategory = MsgStruct.Category
+            local strSender = MsgStruct.Sender:ToString()
+            local guidstructSender = MsgStruct.SenderPlayerUId -- ignored
+            local strMessage = MsgStruct.Message:ToString()
+            local guidstructReceiver = MsgStruct.ReceiverPlayerUId -- ignored for now (TODO: guid > playername lookup function, need to deserialize guid str)
+            
+            print("Got broadcast, msg = " .. strMessage)
         end)
         ]]--
     end
