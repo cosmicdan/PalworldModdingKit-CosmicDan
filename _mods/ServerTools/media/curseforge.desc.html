@@ -1,0 +1,118 @@
+<h2>🌐 About</h2><br/>
+<p>Tools for your dedicated server. Highlights include Whitelisting by Steam ID and chat logging (to the server console and log file). Note that this mod has no function on the normal game client and supports Windows servers only (because UE4SS has not been ported to Linux).</p>
+<br/>
+<br/>
+<br/>
+<h5 style="text-align: center;">💡 <em>This is the initial version and has many more features planned, please comment with any issues or requests </em>😊</h5><br/>
+</p>
+<br/>
+<br/>
+<br/>
+<h2>📜 Changelogs (Update history)</h2></br>
+<br/>
+<div class="spoiler"><p>
+<h5>0.1.0</h5>
+ - Initial release<br/>
+</p></div><br/>
+<br/>
+<br/>
+<br/>
+<h2>🏷️ Features and Config</h2><br/>
+<p>List of current features:</p>
+<ul>
+<li>Whitelist by Steam ID;</li>
+<li>Broadcast player join/leave to chat;</li>
+<li>MOTD / Welcome Message to players on login;</li>
+<li>Chat logging to the server console (for PalServer-Cmd) and to the UE4SS.log file</li>
+</ul>
+<p>As an initial release the features are limited, more soon (it's a learning process)! Also the mod will be open-sourced once I clean it up if you're interested on making your own custom fork.</p>
+<br/>
+<p><img src="https://media.forgecdn.net/attachments/804/826/screenshot_1_serverconsole.png" alt="Console screenshot" width="1115" height="350"></p>
+<br/>
+<br/>
+<h2>🧰 Installation</h2><br/>
+<p>Since this mod is for dedicated servers only, some intermediate knowledge is assumed:</p>
+<ul>
+<li>Install <a href="https://github.com/UE4SS-RE/RE-UE4SS/releases">UE4SS</a> 3.0 or later: Download the release and extract to <br/><span style="font-family: courier new, courier, monospace;">
+PalServer\Pal\Binaries\Win64\<br/></span>
+and start the server once to generate the mod folders;</li>
+<li>Download the Server Tools mod from CurseForge and extract. Move the contents of each folder to the correct location:<br/><span style="font-family: courier new, courier, monospace;">
+LogicMods -> PalServer\Pal\Content\Paks\LogicMods\<br/>
+Mods -> PalServer\Pal\Binaries\Win64\Mods\<br/></span>
+You should end up with the files: <br/><span style="font-family: courier new, courier, monospace;">
+PalServer\Pal\Content\Paks\LogicMods\ServerTools.pak<br/>
+PalServer\Pal\Binaries\Win64\Mods\ServerToolsLoader\Enabled.txt<br/>
+PalServer\Pal\Binaries\Win64\Mods\ServerToolsLoader\Scripts\ </span>[with one or more .lua files and foldes]<br/>
+...start the server once to verify it worked and to generate default configuration files. Running the -Cmd server version is recommended for the console output.
+</li>
+<li>The console/log should show some info along with the paths of the newly-generated config files. For example:<br/><span style="font-family: courier new, courier, monospace;">
+Setting breakpad minidump AppID = 1623730<br/>
+[ServerTools] Server starting...<br/>
+[ServerTools] Welcome to ServerTools v0.1.0<br/>
+[ServerTools] New config file generated: D:/SteamGames/PalServer/Pal/Saved/ServerTools.config.json<br/>
+[ServerTools] Loaded config OK: D:/SteamGames/PalServer/Pal/Saved/ServerTools.config.json<br/>
+[ServerTools] New whitelist file generated: D:/SteamGames/PalServer/Pal/Saved/ServerTools.whitelist.json<br/>
+[ServerTools] Whitelist JSON seems OK, total IDs: 2<br/>
+[ServerTools] Server up!</span></li>
+<li>You can edit the ServerTools.whitelist.json without restarting the server; it will be updated automatically when the next player joins. So add one or more steamId64's, for example:<br/><span style="font-family: courier new, courier, monospace;">
+{"whitelistSteamIds":[<br/>
+    "76561197982956148",<br/>
+    "1"<br/>
+]}</span><br/>
+...in this example the first ID is me (CosmicDan) and the second is just an invalid example to show config syntax, invalid Steam ID's will simply be ignored;
+<li>Changes to ServerTools.config.json DO require a server restart to reload the config. The default ServerTools.config.json as of the latest version is:<br/><span style="font-family: courier new, courier, monospace;">
+{<br/>
+    "whitelistEnabled":true,<br/>
+    "broadcastPlayerJoinLeave":true,<br/>
+    "welcomeMsgEnabled":true,<br/>
+    "welcomeMsg":"Welcome to my Palworld server!",<br/>
+    "chatLogEnabled":true<br/>
+}</span></li>
+</ul>
+JSON is not ideal, I will be looking into a different markup format later.
+<br/>
+<br/>
+<br/>
+<h2>✔️ Compatibility and Known Issues</h2><br/>
+<br/>
+<p>You tell me! Please report any and all compatibility results and issues and I will create this list :)</p>
+<br/>
+<br/>
+<br/>
+<h2>🛎️ Support</h2><br/>
+<br/>
+<p>Hopefully, the mod is simple enough to use, but you are more than welcome to:</p>
+<ul>
+<li>Report any bugs you find;</li>
+<li>Report any incompatibilities with other mods (e.g. custom beds);</li>
+<li>Request any features you want to see</li>
+</ul><br/>
+<p>...and ask pretty much any question related to the mod, I'll reply when I can 😊</p>
+<br/>
+<br/>
+<br/>
+<h2>💙 Credits and Thanks</h2></br>
+<ul>
+<li>CosmicDan: Server Tools author;</li>
+<li>localcc: Author of the Palworld Modding Kit, awesome contibutions to UE4SS;</li>
+<li>Yangff: Help with byteswap stuff (UE GUID parsing);</li>
+<li>ᒪyrthras: Assistance with Lua <> BP interop;</li>
+<li>Peep: Play testing and kindly providing a Windows server to dev with;</li>
+<li>...and all the others who share their modding wisdom on the Discord</li>
+</ul>
+<br/>
+<br/>
+<br/>
+<h2>⁉️ Troubleshooting / FAQ </h2></br>
+<br/>
+<p><em>I will fill this in with more specific Q/A as I get feedback, thank you!</em>
+<p><strong>Q. <em>Can you make X feature?</em></strong></p>
+<p>A. Maybe! Please comment or contact me on Discord and I'll let you know, this is a first release so I will work on whatever features are most desired.</em></p>
+<br/>
+<p><strong>Q. <em>It doesn't work / I can't figure it out</em></strong></p>
+<p>A. Please comment and I will do my best to assist, this is an initial release so I don't know what else to put in this FAQ list yet 😁</p>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
