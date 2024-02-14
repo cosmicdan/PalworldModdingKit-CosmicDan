@@ -13,7 +13,7 @@ IF NOT "%1"=="IsSafeToRun" ( exit /b )
 SET PMK_WWISE_UE5_PATH=E:\Development\Palworld\Wwise_Unreal_Integration_2021.1.11.2437\Unreal.5.0\Wwise
 
 :: Use directory junctions instead of copying for the Wwise VC dependency stuff (ThirdParty folder). Saves almost 3GB.
-:: NOTE: Doesnt do anything yet, _init will always make links instead of copying, I'll add it if there's any need (
+:: NOTE: Always true, couldn't be bothered supporting plain copy
 SET PMK_WWISE_DEPS_USE_LINKS=true
 
 :: Path of Wwise SDK, seems to be set via installer already but we'll make it configurable just in case
