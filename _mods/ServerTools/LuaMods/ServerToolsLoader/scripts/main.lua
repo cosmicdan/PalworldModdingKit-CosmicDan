@@ -6,14 +6,15 @@
     Daniel "CosmicDan" Connolly
 ]]--
 
--- UE4SS 3.0.0
-local SupportedBpLoaderScriptSize = 7819
+local modActorClassName = "ServerToolsActor"
+
+require("servertoolsloader")
 
 -- Credits to Khejanin for this function
 function getServerToolsModActor()
-    local modActors = FindAllOf("ModActor_C");
+    local modActors = FindAllOf(modActorClassName .. "_C");
     for idx, modActor in ipairs(modActors) do
-        if modActor:IsA("/Game/Mods/ServerTools/ModActor.ModActor_C") then
+        if modActor:IsA("/Game/Mods/ServerTools/" .. modActorClassName .. "." .. modActorClassName .. "_C") then
             return modActor
         end
     end
@@ -64,24 +65,7 @@ function AfterFirstTick()
     print("Server up!")
 end
 
-function verifyBpLoader()
-    bpLoaderLuaFile=io.open("Mods\\BPModLoaderMod\\Scripts\\main.lua","r")
-    if bpLoaderLuaFile == nil then
-        print("Missing BPModLoaderMod? Your UE4SS install is incomplete/corrupted, mod will not work!")
-        return
-    else
-        foundBpSize = bpLoaderLuaFile:seek("end")
-        if foundBpSize ~= SupportedBpLoaderScriptSize then
-            print("WARNING: Your BPModLoader mod is NOT the original UE4SS 3.0 version. ServerTools may not work.")
-            print ("    [Size of main.script is " .. tostring(foundBpSize) .. ", expected " .. tostring(SupportedBpLoaderScriptSize) .. "]")
-        end
-    end
-end
-
-
 -- Run
-
-verifyBpLoader()
 
 --[[
 NotifyOnNewObject("/Script/Engine.NetConnection", function (Context)
@@ -93,7 +77,7 @@ RegisterCustomEvent("OnServerToolsInit", function ()
     --DumpAllObjects()
     local errored = false
    
-    local strModPrintFunc = "/Game/Mods/ServerTools/ModActor.ModActor_C:ModPrint"
+    local strModPrintFunc = "/Game/Mods/ServerTools/" .. modActorClassName .. "." .. modActorClassName .. "_C:ModPrint"
     if StaticFindObject(strModPrintFunc):IsValid() then
         RegisterHook(strModPrintFunc, function(self, InString)
             print(InString:get():ToString())
@@ -102,7 +86,7 @@ RegisterCustomEvent("OnServerToolsInit", function ()
         errored = true
     end
     
-    local strAfterFirstTickFunc = "/Game/Mods/ServerTools/ModActor.ModActor_C:AfterFirstTick"
+    local strAfterFirstTickFunc = "/Game/Mods/ServerTools/" .. modActorClassName .. "." .. modActorClassName .. "_C:AfterFirstTick"
     if StaticFindObject(strAfterFirstTickFunc):IsValid() then
         RegisterHook(strAfterFirstTickFunc, function(self)
             AfterFirstTick()
@@ -165,7 +149,7 @@ LoopAsync(1000, function()
         return true
     end
 
-    if StaticFindObject("/Game/Mods/ServerTools/ModActor.ModActor_C:ModPrint"):IsValid() then
+    if StaticFindObject("/Game/Mods/ServerTools/" .. modActorClassName .. "." .. modActorClassName .. "_C:ModPrint"):IsValid() then
         return true
     end
    
