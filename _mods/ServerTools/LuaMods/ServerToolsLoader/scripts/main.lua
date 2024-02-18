@@ -119,8 +119,9 @@ RegisterCustomEvent("OnServerToolsPostInit", function ()
             modActor:OnChatRecv(byteCategory, FText(strSender), FText(strMessage))
         end)
         
-        NotifyOnNewObject("/Script/Pal.PalPlayerState", function (PalPlayerState)
-            modActor:OnNewPalPlayerState(PalPlayerState)
+        NotifyOnNewObject("/Script/Pal.PalPlayerCharacter", function (PalPlayerCharacter)
+            --print("~~~ New PalPlayerCharacter")
+            modActor:OnNewPalPlayerCharacter(PalPlayerCharacter)
         end)
         
         -- Could be used to receive bounce-backs from fake players
