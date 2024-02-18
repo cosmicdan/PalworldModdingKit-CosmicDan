@@ -11,7 +11,7 @@ local modActorClassName = "ServerToolsActor"
 require("servertoolsloader")
 
 -- Credits to Khejanin for this function
-function getServerToolsModActor()
+local function getServerToolsModActor()
     local modActors = FindAllOf(modActorClassName .. "_C");
     for idx, modActor in ipairs(modActors) do
         if modActor:IsA("/Game/Mods/ServerTools/" .. modActorClassName .. "." .. modActorClassName .. "_C") then
@@ -22,12 +22,12 @@ function getServerToolsModActor()
 end
 
 -- Thanks to Yangff
-function decodeFGUIdToStr(guidIn)
+local function decodeFGUIdToStr(guidIn)
     return string.format("%08X%08X%08X%08X", guidIn.A & 0xffffffff, guidIn.B & 0xffffffff, guidIn.C & 0xffffffff, guidIn.D & 0xffffffff)
 end
 
 
-function dumpStruct(StructObj)
+local function dumpStruct(StructObj)
     StructObj:ForEachProperty(function(Property)
         print(string.format("0x%04X    %s %s", Property:GetOffset_Internal(), Property:GetClass():GetFName():ToString(), Property:GetFName():ToString()))
     end)
@@ -37,13 +37,13 @@ local modActor = nil
 
 -- Print to both stdout and the ue4ss console
 local printOrg = print
-function print(sMsg)
+local function print(sMsg)
     local outString = string.format("[ServerTools] %s\n", sMsg)
     printOrg(outString)
     io.write(outString)
 end
 
-function dumpEverythingNow()
+local function dumpEverythingNow()
     print("Dumping all objects...")
     DumpAllObjects()
     print("Generating CXX...")
@@ -141,19 +141,3 @@ RegisterCustomEvent("OnServerToolsPostInit", function ()
         ]]--
     end
 end)
-
-local loadCheckLoops = 0
-LoopAsync(1000, function()
-    if loadCheckLoops >= 10 then -- wait 10 seconds max
-        print("Failed to load the ServerTools.pak file! Are you sure it's installed?")        
-        return true
-    end
-
-    if StaticFindObject("/Game/Mods/ServerTools/" .. modActorClassName .. "." .. modActorClassName .. "_C:ModPrint"):IsValid() then
-        return true
-    end
-   
-    loadCheckLoops = loadCheckLoops + 1
-    return false
-end)
-

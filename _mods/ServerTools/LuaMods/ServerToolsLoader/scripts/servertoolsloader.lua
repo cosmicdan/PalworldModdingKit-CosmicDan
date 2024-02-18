@@ -5,7 +5,7 @@ local UEHelpers = require("UEHelpers")
 local VerboseLogging = true
 
 local printOrg = print
-function Log(Message, AlwaysLog)
+local function Log(Message, AlwaysLog)
     if not VerboseLogging and not AlwaysLog then return end
     printOrg(Message)
 end
@@ -22,7 +22,7 @@ DefualtModConfig.AssetName = "ServerToolsActor_C"
 DefualtModConfig.AssetNameAsFName = FName("ServerToolsActor_C")
 
 -- Explodes a string by a delimiter into a table
-function Explode(String, Delimiter)
+local function Explode(String, Delimiter)
     local ExplodedString = {}
     local Iterator = 1
     local DelimiterFrom, DelimiterTo = string.find(String, Delimiter, Iterator)
@@ -37,7 +37,7 @@ function Explode(String, Delimiter)
     return ExplodedString
 end
 
-function LoadModConfigs()
+local function LoadModConfigs()
     -- Load configurations for mods.
     local Dirs = IterateGameDirectories();
     if not Dirs then
@@ -100,31 +100,21 @@ end
 local AssetRegistryHelpers = nil
 local AssetRegistry = nil
 
-function LoadMod(ModName, ModInfo, GameMode)
-    print("Loading...")
-    if ModInfo.AssetPath == nil or ModInfo.AssetPath == nil then
-        Log(string.format("Could not load mod '%s' because it has no asset path or name.\n", ModName))
-    end
-
-    local AssetData = nil
-    if UnrealVersion.IsBelow(5, 1) then
-        AssetData = {
-            ["ObjectPath"] = FName(string.format("%s.%s", ModInfo.AssetPath, ModInfo.AssetName), EFindName.FNAME_Add),
-        }
-    else
-        AssetData = {
-            ["PackageName"] = FName(ModInfo.AssetPath, EFindName.FNAME_Add),
-            ["AssetName"] = FName(ModInfo.AssetName, EFindName.FNAME_Add),
-        }
-    end
-
+local function LoadMod(World)
+    local AssetData = {
+        ["PackageName"] = FName("/Game/Mods/ServerTools/ServerToolsActor", EFindName.FNAME_Add),
+        ["AssetName"] = FName("ServerToolsActor_C", EFindName.FNAME_Add),
+    }
+    
     ExecuteInGameThread(function()
         local ModClass = AssetRegistryHelpers:GetAsset(AssetData)
-        if not ModClass:IsValid() then error("ModClass is not valid") end
+        if not ModClass:IsValid() then
+            error("Main ServerTools class not found. Missing ServerTools.pak?")    
+        end
 
-        -- TODO: Use 'UEHelpers' to get the world.
-        local World = GameMode:GetWorld()
         if not World:IsValid() then error("World is not valid") end
+        --Log(string.format("~~~~ WorldClass = '%s'\n", World:GetFullName()))
+        --Log(string.format("~~~~ GameModeClass = '%s'\n", GameMode:GetFullName()))
 
         local Actor = World:SpawnActor(ModClass, {}, {})
         if not Actor:IsValid() then
@@ -142,7 +132,8 @@ function LoadMod(ModName, ModInfo, GameMode)
     end)
 end
 
-function CacheAssetRegistry()
+
+local function CacheAssetRegistry()
     if AssetRegistryHelpers and AssetRegistry then return end
 
     AssetRegistryHelpers = StaticFindObject("/Script/AssetRegistry.Default__AssetRegistryHelpers")
@@ -159,29 +150,39 @@ function CacheAssetRegistry()
     error("AssetRegistry is not valid\n")
 end
 
-function LoadMods(GameMode)
-    CacheAssetRegistry()
-    for ModName, ModInfo in pairs(Mods) do
-        if type(ModInfo) == "table" then
-            LoadMod(ModName, ModInfo, GameMode)
-        end
-    end
-end
+local loadWorldLoops = 0
+LoopAsync(10, function()
+    if loadWorldLoops >= 3000 then -- wait 30 seconds max
+        print("World has still not loaded after 30 seconds... aborting.")
+        return true
+    end	
+        
+    local World = StaticFindObject("/Game/Pal/Maps/MainWorld_5/PL_MainWorld5.PL_MainWorld5")
+    if World:IsValid() then
+    	--print("World found! Load mod....")
+        --ExecuteWithDelay(1000, function()
+        --LoadMods(World)
+        CacheAssetRegistry()
+        LoadMod(World)
+        
 
-RegisterInitGameStatePostHook(function(ContextParam)
-    LoadMods(ContextParam:get())
-end)
-
-RegisterBeginPlayPostHook(function(ContextParam)
-    local Context = ContextParam:get()
-    for _,ModConfig in pairs(Mods) do
-        if Context:GetClass():GetFName() ~= ModConfig.AssetNameAsFName then return end
-        local PostBeginPlay = Context.PostBeginPlay
-        if PostBeginPlay:IsValid() then
-            Log(string.format("Executing 'PostBeginPlay' for mod '%s'\n", Context:GetFullName()))
-            PostBeginPlay()
-        else
-            Log("PostBeginPlay not valid\n")
-        end
+        RegisterBeginPlayPostHook(function(ContextParam)
+            local Context = ContextParam:get()
+            for _,ModConfig in pairs(Mods) do
+                if Context:GetClass():GetFName() ~= ModConfig.AssetNameAsFName then return end
+                local PostBeginPlay = Context.PostBeginPlay
+                if PostBeginPlay:IsValid() then
+                    Log(string.format("Executing 'PostBeginPlay' for mod '%s'\n", Context:GetFullName()))
+                    PostBeginPlay()
+                else
+                    Log("PostBeginPlay not valid\n")
+                end
+            end
+        end)
+        --end)
+        return true
     end
+   
+    loadWorldLoops = loadWorldLoops + 1
+    return false
 end)
