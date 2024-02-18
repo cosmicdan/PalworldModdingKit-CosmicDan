@@ -1,75 +1,111 @@
 <h2>🌐 About</h2><br/>
-<p>Tools for your dedicated server. Highlights include Whitelisting by Steam ID and chat logging (to the server console and log file). Note that this mod has no function on the normal game client and supports Windows servers only (because UE4SS has not been ported to Linux).</p>
+<p>Tools for your dedicated server. Highlights include SteamID whitelisting, auto-shutdown timer (with chat reminders to players), chat logging, and more - see Current Features below.</p>
+<br/>
+<p>Note that this mod has no function on the normal game client and supports Windows servers only (because UE4SS has not been ported to Linux yet).</p>
 <br/>
 <br/>
 <br/>
-<h5 style="text-align: center;">💡 <em>This is the initial version and has many more features planned, please comment with any issues or requests </em>😊</h5><br/>
+<p style="text-align: center;">💡 <em>This is the initial version and has many more features planned, please comment with any issues or requests </em>😊</p><br/>
+<br/>
+<p style="text-align: center;"><strong>🔓 Open-Source (GPLv3): See <a href="https://github.com/cosmicdan/PalworldModdingKit-CosmicDan">CosmicDan's Palworld Mods on GitHub</a></strong></p>
+<br/>
+<br/>
+<br/>
 </p>
-<br/>
-<br/>
-<br/>
-<h2>📜 Changelogs (Update history)</h2></br>
-<br/>
-<div class="spoiler"><p>
-<h5>0.1.0</h5>
- - Initial release<br/>
-</p></div><br/>
-<br/>
-<br/>
-<br/>
-<h2>🏷️ Features and Config</h2><br/>
-<p>List of current features:</p>
-<ul>
-<li>Whitelist by Steam ID;</li>
-<li>Broadcast player join/leave to chat;</li>
-<li>MOTD / Welcome Message to players on login;</li>
-<li>Chat logging to the server console (for PalServer-Cmd) and to the UE4SS.log file</li>
-</ul>
-<p>As an initial release the features are limited, more soon (it's a learning process)! Also the mod will be open-sourced once I clean it up if you're interested on making your own custom fork.</p>
-<br/>
 <p><img src="https://media.forgecdn.net/attachments/804/826/screenshot_1_serverconsole.png" alt="Console screenshot" width="1115" height="350"></p>
 <br/>
 <br/>
-<h2>🧰 Installation</h2><br/>
-<p>Since this mod is for dedicated servers only, some intermediate knowledge is assumed:</p>
+<br/>
+<h2>❇️ Current Features</h2></br>
 <ul>
-<li>Install <a href="https://github.com/UE4SS-RE/RE-UE4SS/releases">UE4SS</a> 3.0 or later: Download the release and extract to <br/><span style="font-family: courier new, courier, monospace;">
-PalServer\Pal\Binaries\Win64\<br/></span>
-and start the server once to generate the mod folders;</li>
-<li>Download the Server Tools mod from CurseForge and extract. Move the contents of each folder to the correct location:<br/><span style="font-family: courier new, courier, monospace;">
-LogicMods -> PalServer\Pal\Content\Paks\LogicMods\<br/>
-Mods -> PalServer\Pal\Binaries\Win64\Mods\<br/></span>
-You should end up with the files: <br/><span style="font-family: courier new, courier, monospace;">
-PalServer\Pal\Content\Paks\LogicMods\ServerTools.pak<br/>
-PalServer\Pal\Binaries\Win64\Mods\ServerToolsLoader\Enabled.txt<br/>
-PalServer\Pal\Binaries\Win64\Mods\ServerToolsLoader\Scripts\ </span>[with one or more .lua files and foldes]<br/>
-...start the server once to verify it worked and to generate default configuration files. Running the -Cmd server version is recommended for the console output.
-</li>
-<li>The console/log should show some info along with the paths of the newly-generated config files. For example:<br/><span style="font-family: courier new, courier, monospace;">
-Setting breakpad minidump AppID = 1623730<br/>
-[ServerTools] Server starting...<br/>
-[ServerTools] Welcome to ServerTools v0.1.0<br/>
-[ServerTools] New config file generated: D:/SteamGames/PalServer/Pal/Saved/ServerTools.config.json<br/>
-[ServerTools] Loaded config OK: D:/SteamGames/PalServer/Pal/Saved/ServerTools.config.json<br/>
-[ServerTools] New whitelist file generated: D:/SteamGames/PalServer/Pal/Saved/ServerTools.whitelist.json<br/>
-[ServerTools] Whitelist JSON seems OK, total IDs: 2<br/>
-[ServerTools] Server up!</span></li>
-<li>You can edit the ServerTools.whitelist.json without restarting the server; it will be updated automatically when the next player joins. So add one or more steamId64's, for example:<br/><span style="font-family: courier new, courier, monospace;">
-{"whitelistSteamIds":[<br/>
-    "76561197982956148",<br/>
-    "1"<br/>
-]}</span><br/>
-...in this example the first ID is me (CosmicDan) and the second is just an invalid example to show config syntax, invalid Steam ID's will simply be ignored;
-<li>Changes to ServerTools.config.json DO require a server restart to reload the config. The default ServerTools.config.json as of the latest version is:<br/><span style="font-family: courier new, courier, monospace;">
-{<br/>
-    "whitelistEnabled":true,<br/>
-    "broadcastPlayerJoinLeave":true,<br/>
-    "welcomeMsgEnabled":true,<br/>
-    "welcomeMsg":"Welcome to my Palworld server!",<br/>
-    "chatLogEnabled":true<br/>
-}</span></li>
+<li>Whitelist by SteamID64;</li>
+<li>Broadcast player join/leave to chat;</li>
+<li>MOTD / Welcome Message to players on login;</li>
+<li>Chat logging to the server console (for PalServer-Cmd) and to the UE4SS.log file;</li>
+<li>Automatic shutdown after X minutes, with configurable time-remaining warnings and welcome message (see Config Docs section for details);</li>
+<li>Logging the server startup process, *reliably* - when ServerTools says your server is up, it's actually up (the world has started ticking);</li>
 </ul>
-JSON is not ideal, I will be looking into a different markup format later.
+<br/>
+<br/>
+<br/>
+<h2>🔮 Planned Features</h2></br>
+<ul>
+<li>Idle-Kick;</li>
+<li>Dumping various information to the disk (for e.g. a bot/web service/etc. to consume);</li>
+<li>Hopefully some world-building/editing capability (e.g. custom ore node placement);</li>
+<li>Custom zone protection for admin/community spaces;</li>
+<li>Player and Admin-made "shops" (trade stations) (might need a client mod if I can't do it "magic chests" style);</li>
+<li>... share your ideas/requests!</li>
+</ul>
+<br/>
+<br/>
+<br/>
+<h2>🧰 Installation</h2><br/>
+<p>Since this mod is for dedicated servers only, some intermediate knowledge is assumed. Note - do NOT use a server injector, it is not required with UE4SS v3.</p>
+<ul>
+<li><em>If updating ServerTools</em>: delete your old <span style="font-family: courier new, courier, monospace;">Win64\Mods\ServerToolsLoader</span> folder first;</li>
+<li><em>If installing for the first time</em>: Install <a href="https://github.com/UE4SS-RE/RE-UE4SS/releases">UE4SS</a> 3.0 or later: Download the release, extract to <span style="font-family: courier new, courier, monospace;">PalServer\Pal\Binaries\Win64\</span>and start the server once to generate the mod folders;</li>
+<li>Download the Server Tools mod from CurseForge and extract. Move the contents of each folder to the correct location:<br/>
+<pre>LogicMods -> PalServer\Pal\Content\Paks\LogicMods\
+Mods -> PalServer\Pal\Binaries\Win64\Mods\<br/></pre>
+You should end up with the files: <br/>
+<pre>PalServer\Pal\Content\Paks\LogicMods\ServerTools.pak
+PalServer\Pal\Binaries\Win64\Mods\ServerToolsLoader\Enabled.txt
+PalServer\Pal\Binaries\Win64\Mods\ServerToolsLoader\Scripts\main.lua [with more lua files/folders] </pre><br/>
+...start the server once to verify it worked and to generate default configuration files.
+</li>
+<li>The console/log should show some info along with the paths of the newly-generated config files; see the screenshot above for example.</li>
+<li>You can now edit the configs, see the "Config Docs" below for additional details. Note that the server will need to be restarted for config to apply, *except* the whitelist config - it is read fresh from disk every time a player joins.</li>
+<br/>
+<br/>
+<br/>
+<h2>📜 Config Docs</h2><br/>
+<em>Note that JSON is not ideal for human-editing, you must be careful to preserve commas and brackets and such. I will move to a better config format soon.</em>
+<p>ServerTools.config.json:</p>
+<div class="spoiler">
+<pre>"whitelistEnabled":true,</pre>
+ - Whitelist is enabled. Be sure to add SteamID64's to the whitelist json.<br/>
+<pre>"broadcastPlayerJoinLeave":true</pre>
+ - If true, the server will broadcast when a player joins or leaves, in the format "Playername joined" or "Playername left".<br/>
+<pre>"welcomeMsgEnabled":true,</pre>
+ - Enable the welcome message below. Sent to players a few seconds after spawning.<br/>
+<pre>"welcomeMsg":"Welcome to my Palworld server!",</pre>
+ - Self-explainatory.<br/>
+<pre>"chatLogEnabled":true</pre>
+ - If true, all chat messages including slash commands will be logged to the server console / UE4SS log. Includes channel and player name.<br/>
+</p></div>
+<br/>
+<p>ServerTools.whitelist.json</p>
+<div class="spoiler"><p>
+<pre>{"whitelistSteamIds":["0","1"]}</pre>
+ - SteamID64's to allow. Note that the defaults of 0 and 1 are invalid and will simply be skipped; they're just for example to show the array structure (remember those darn commas).<br/>
+<br/>
+Note that you can edit this file while the server is running; it will be reloaded whenever a player logs in.<br/>
+<br/>
+Also note that you can reformat the config to make it easier to see or generate/edit via automation; ServerTools will not wreck the formatting. E.g.:<br/>
+<pre>
+{"whitelistSteamIds":[
+    "0",
+    "1",
+    "12345678"
+]}</pre><br/>
+</p></div>
+<br/>
+<p>ServerTools.autoshutdown.json</p>
+<div class="spoiler"><p>
+<pre>"autoShutdownEnabled":false,</pre>
+ - If auto shutdown is enabled. It's up to your launch script/panel/whatever to restart the server.<br/>
+<pre>"shutdownAfterMinutes":60,</pre>
+ - How many minutes after server launch before the shutdown will occur.
+<pre>"warnAtMinutesDesc":[30,10,5,1],</pre>
+ - Will broadcast a message (see below) when the server time remaining reaches these thresholds. Be sure to make sure the values are descending and there are no duplicates.<br/>
+<pre>"warnMessage":"Server will restart in {1} minutes",</pre>
+ - The warn message to use. {1} will be replaced with the minutes value.<br/>
+<pre>"addRemainingTimeToWelcomeMsg":true,</pre>
+ - If true, newly joining players will be notified of the next restart time in minutes. Requires welcome message to be enabled.<br/>
+<pre>"addRemainingTimeMsg":"Next server restart in {1} minutes"</pre>
+ - The message to add to welcome message, if enabled. {1} will be replaced with the calculated minutes remaining (rounded down so could potentially say 0 if less than 1 minute remains).<br/>
+</p></div>
 <br/>
 <br/>
 <br/>
