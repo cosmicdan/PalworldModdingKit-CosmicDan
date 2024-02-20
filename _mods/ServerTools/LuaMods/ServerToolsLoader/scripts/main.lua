@@ -119,7 +119,7 @@ RegisterCustomEvent("OnServerToolsPostInit", function ()
             
             -- Thanks to Lyrthras for RetVal handling
             local RetVal = {}
-            modActor:OnChatRecv(byteCategory, decodeFGUIdToStr(guidstructSender), FName(strSender), FName(strMessage), RetVal)
+            modActor:OnChatRecv(byteCategory, decodeFGUIdToStr(guidstructSender), FText(strSender), FText(strMessage), RetVal)
             if RetVal.ChatConsumed == true then
                 MsgStruct.Category = 15 -- setting an invalid (beyond currently-defined max) category byte allows to "cancel" the message
                 return MsgStruct
