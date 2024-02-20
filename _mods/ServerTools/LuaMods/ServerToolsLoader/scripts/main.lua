@@ -130,6 +130,12 @@ RegisterCustomEvent("OnServerToolsPostInit", function ()
             -- New player has joined the server, load them up
             modActor:OnNewPalPlayerCharacter(PalPlayerCharacter)
         end)
+
+        RegisterHook("/Game/Mods/ServerTools/" .. modActorClassName .. "." .. modActorClassName .. "_C:CommandDump", function(self)
+            ExecuteWithDelay(1, function() -- spawn async so we can return to command sender immediately
+                dumpEverythingNow()
+            end)
+        end)
     end
 end)
 
