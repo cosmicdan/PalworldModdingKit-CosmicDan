@@ -107,38 +107,32 @@ RegisterCustomEvent("OnServerToolsPostInit", function ()
         print("Main mod failed to load. Missing/outdated ServerTools.pak?")
     else
         RegisterHook("/Script/Pal.PalPlayerState:EnterChat_Receive", function(PalPlayerState, ChatMessage)
+            --print("~~~ EnterChat_Receive")
             local MsgStruct = ChatMessage:get()
             
             -- need to deserialize the entire struct in order, otherwise UE crashes
             local byteCategory = MsgStruct.Category
             local strSender = MsgStruct.Sender:ToString()
-            local guidstructSender = MsgStruct.SenderPlayerUId -- ignored
+            local guidstructSender = MsgStruct.SenderPlayerUId
             local strMessage = MsgStruct.Message:ToString()
             local guidstructReceiver = MsgStruct.ReceiverPlayerUId -- ignored for now (TODO: guid > playername lookup function, need to deserialize guid str)
             
-            modActor:OnChatRecv(byteCategory, FText(strSender), FText(strMessage))
+            -- Thanks to Lyrthras for RetVal handling
+            local RetVal = {}
+            modActor:OnChatRecv(byteCategory, decodeFGUIdToStr(guidstructSender), FName(strSender), FName(strMessage), RetVal)
+            if RetVal.ChatConsumed == true then
+                MsgStruct.Category = 15 -- setting an invalid (beyond currently-defined max) category byte allows to "cancel" the message
+                return MsgStruct
+            end
         end)
         
         NotifyOnNewObject("/Script/Pal.PalPlayerCharacter", function (PalPlayerCharacter)
-            --print("~~~ New PalPlayerCharacter")
+            -- New player has joined the server, load them up
             modActor:OnNewPalPlayerCharacter(PalPlayerCharacter)
         end)
-        
-        -- Could be used to receive bounce-backs from fake players
-        --[[
-        RegisterHook("/Script/Pal.PalGameStateInGame:BroadcastChatMessage", function(BroadcastChatMessage, ChatMessage)
-            
-            local MsgStruct = ChatMessage:get()
-            
-            -- need to deserialize the entire struct in order, otherwise UE crashes
-            local byteCategory = MsgStruct.Category
-            local strSender = MsgStruct.Sender:ToString()
-            local guidstructSender = MsgStruct.SenderPlayerUId -- ignored
-            local strMessage = MsgStruct.Message:ToString()
-            local guidstructReceiver = MsgStruct.ReceiverPlayerUId -- ignored for now (TODO: guid > playername lookup function, need to deserialize guid str)
-            
-            print("Got broadcast, msg = " .. strMessage)
-        end)
-        ]]--
     end
 end)
+
+if FText == nil then
+    print("ERROR: UE4SS 2.5 detected, mod will crash. Please update to UE4SS 3.0 or later.")
+end
