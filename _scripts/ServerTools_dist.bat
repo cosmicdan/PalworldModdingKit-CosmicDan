@@ -14,13 +14,16 @@ IF EXIST "%MOD_DIST_OUT%" (
     exit /b
 )
 
+SET MOD_OUTDIR_PAK=%MOD_DIST_OUT%\Pal\Content\Paks\LogicMods
+SET MOD_OUTDIR_LUA=%MOD_DIST_OUT%\Pal\Binaries\Win64\Mods
+
 echo [#] Making dist at "%MOD_DIST_OUT%"...
-mkdir "%MOD_DIST_OUT%\LogicMods"
-mkdir "%MOD_DIST_OUT%\Mods"
+mkdir "%MOD_OUTDIR_PAK%"
+mkdir "%MOD_OUTDIR_LUA%"
 :: copy pak file
-copy /y "%MOD_PAK_SRC%" "%MOD_DIST_OUT%\LogicMods\ServerTools.pak"
+copy /y "%MOD_PAK_SRC%" "%MOD_OUTDIR_PAK%\ServerTools.pak"
 :: copy lua part
-XCOPY "%MOD_LUAMODS_SRC%" "%MOD_DIST_OUT%\Mods" /E /I /Q /Y
+XCOPY "%MOD_LUAMODS_SRC%" "%MOD_OUTDIR_LUA%\" /E /I /Q /Y
 
 echo.
 echo.
