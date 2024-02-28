@@ -49,7 +49,7 @@ public:
     UPalBodyTemperatureComponent(const FObjectInitializer& ObjectInitializer);
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-    
+
     UFUNCTION(BlueprintCallable)
     void RemoveHeatSource(FName UniqueName);
     
